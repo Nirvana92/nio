@@ -2,9 +2,7 @@ package org.nirvana.io.nio;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -47,7 +45,7 @@ public class ServerNioNonBlocking {
                 if(select > 0) {
                     // 这边选择的keys 需要移除, 所以需要使用迭代器的方式进行移除
                     Set<SelectionKey> keys = selector.selectedKeys();
-                    // fixme: 为什么这边一直都有key进入.
+                    // fixme: 为什么这边一直都有key进入.[因为退出的时候没有将selectionKey 进行移除]
                     // System.out.println("keys.size: "+keys.size());
                     Iterator<SelectionKey> keysIterator = keys.iterator();
                     while (keysIterator.hasNext()) {
@@ -80,20 +78,21 @@ public class ServerNioNonBlocking {
             SocketChannel client = (SocketChannel) key.channel();
             ByteBuffer buffer = ByteBuffer.allocate(1024);
             int readLen = 0;
-            while ((readLen = client.read(buffer)) != 0) {
+            while ((readLen = client.read(buffer)) > 0) {
                 buffer.flip();
-                 byte[] msgs = new byte[buffer.limit()];
-                 buffer.get(msgs);
+//                 byte[] msgs = new byte[buffer.limit()];
+//                 buffer.get(msgs);
 
                 System.out.println(String.format("[host=%s] [port=%s] [msg=%s]",
                         client.socket().getInetAddress().getHostAddress(),
                         client.socket().getPort(),
-                        new String(msgs, "utf-8")));
-                // buffer.clear();
+                        new String(buffer.array(), "utf-8")));
+                buffer.clear();
             }
 
             // 如果客户端断开了连接. 将key 移除掉
             if(readLen == -1) {
+                System.out.println("移除 selectKey");
                 client.close();
                 key.cancel();
             }
