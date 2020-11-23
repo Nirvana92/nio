@@ -1,9 +1,12 @@
 package org.nirvana.io;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -35,6 +38,8 @@ public class ServerIO {
                 threadPool.execute(() -> {
                     try {
                         handler(client);
+                        // System.out.println("接受的消息: "+receiveMsg);
+                        // sendMsg(client, receiveMsg);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -47,10 +52,28 @@ public class ServerIO {
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
             // String readLine = reader.readLine();
-            String readLine = null;
+            String readLine = reader.readLine();
             while ((readLine = reader.readLine()) != null) {
                 String printMsg = "[host: %s] [host: %s] [msg: %s]";
                 System.out.println(String.format(printMsg, client.getInetAddress().getHostAddress(), client.getPort(), readLine));
+
+                sendMsg(client, readLine);
+            }
+        }
+
+        public void sendMsg(Socket client, String msg) {
+            OutputStream os = null;
+            BufferedWriter writer = null;
+            try {
+                os = client.getOutputStream();
+                writer = new BufferedWriter(new OutputStreamWriter(os));
+
+                writer.write(msg);
+                writer.flush();
+                writer.newLine();
+                writer.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

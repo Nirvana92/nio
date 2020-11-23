@@ -1,4 +1,4 @@
-package org.nirvana;
+package org.nirvana.template;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -11,8 +11,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class SocketMultiplexingSingleThreadv1 {
-
-    //马老师的坦克 一 二期
     private ServerSocketChannel server = null;
     private Selector selector = null;   //linux 多路复用器（select poll    epoll kqueue） nginx  event{}
     int port = 9090;
