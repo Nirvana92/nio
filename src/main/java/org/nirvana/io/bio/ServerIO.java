@@ -1,4 +1,4 @@
-package org.nirvana.io;
+package org.nirvana.io.bio;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -54,7 +54,7 @@ public class ServerIO {
             // String readLine = reader.readLine();
             String readLine = reader.readLine();
             while ((readLine = reader.readLine()) != null) {
-                String printMsg = "[host: %s] [host: %s] [msg: %s]";
+                String printMsg = "[host: %s] [port: %s] [msg: %s]";
                 System.out.println(String.format(printMsg, client.getInetAddress().getHostAddress(), client.getPort(), readLine));
 
                 sendMsg(client, readLine);

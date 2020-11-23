@@ -1,4 +1,4 @@
-package org.nirvana.io;
+package org.nirvana.io.bio;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
